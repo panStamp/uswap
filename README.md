@@ -1,5 +1,5 @@
 # uSWAP
-Micro SWAP stack for ESP8266
+Micro SWAP stack for MCU's connected to a panStamp modem via UART
 
 This library connects to a panStamp modem connected to the MCU UART. This library is not really like pyswap, the main differences being:
 
