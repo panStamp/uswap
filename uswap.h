@@ -96,8 +96,9 @@ class SWAP
      */
     inline void begin(uint8_t channel=DEFAULT_RF_CHANNEL, uint8_t netidH=DEFAULT_NETID_H, uint8_t netidL=DEFAULT_NETID_L, uint8_t address=DEFAULT_DEV_ADDRESS)
     {
+      LEDS::config();
       modem.begin();
-      if (modem.config(channel, netidH, netidL, address))
+      if (!modem.config(channel, netidH, netidL, address))
       {
         LEDS::led2(HIGH);
       }
