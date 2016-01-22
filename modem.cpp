@@ -40,6 +40,7 @@ bool MODEM::config(uint8_t channel, uint8_t netidH, uint8_t netidL, uint8_t addr
 {
   bool res = false;
 
+  Serial.flush();
   clearRxBuffer();
 
   // Enter command mode
