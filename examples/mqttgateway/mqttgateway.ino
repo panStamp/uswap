@@ -47,6 +47,11 @@ DEVTEMP tempSensor(0x23);
 
 void setup()
 {
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  
+  Serial.begin(38400);
+  
   // Connect to WiFi network
   WiFi.begin(ssid, password);
   Serial.print("\n\r \n\rWorking to connect");
@@ -67,7 +72,9 @@ void setup()
 
   // Connect to MQTT server
   mqttConnect();
+  mqttHandle();
 
+  delay(1000);
   // Start conversations with modem
   swap.begin();
 }
