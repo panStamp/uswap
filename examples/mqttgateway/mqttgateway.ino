@@ -23,9 +23,11 @@
  */
  
 #include <uswap.h>
-#include <devtemp.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+
+
+#define DEBUG_ENABLED  1
 
 /**
  * Wifi settings
@@ -43,7 +45,10 @@ const char* description = "MQTT RGB driver";
 WiFiClient espClient;
 
 // SWAP devices
-DEVTEMP tempSensor(0x23);
+DEVTEMP tempSensor(0x1A);
+DEVTEMPHUM tempHumSensor(0x09);
+BINOUTS binOuts(0x11);
+RGBDRIVER rgbDriver(0xFF);
 
 void setup()
 {
@@ -54,21 +59,29 @@ void setup()
   
   // Connect to WiFi network
   WiFi.begin(ssid, password);
+
+  #ifdef DEBUG_ENABLED
   Serial.print("\n\r \n\rWorking to connect");
+  #endif
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
+
+    #ifdef DEBUG_ENABLED
     Serial.print(".");
+    #endif
   }
 
+  #ifdef DEBUG_ENABLED
   Serial.println("");
   Serial.println("esp-io Web Server");
   Serial.print("Connected to ");
   Serial.println(ssid);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  #endif
 
   // Connect to MQTT server
   mqttConnect();
