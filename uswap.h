@@ -29,6 +29,12 @@
 #include "modem.h"
 #include "leds.h"
 
+// SWAP device classes
+#include "devtemp.h"
+#include "devtemphum.h"
+#include "binouts.h"
+#include "rgbdriver.h"
+
 #define null 0
 #define MAX_DEVICES  50
 
@@ -64,26 +70,43 @@ class SWAP
      */
     static uint8_t numDevices;
 
+  public:
     /**
-     * getDevice
-     *
-     * Get device object with address passed as argument
-     *
-     * @param addr SWAP address
-     *
-     * @return DEVICE object
+     * Gateway address
      */
-    inline DEVICE * getDevice(uint8_t addr)
+    uint8_t address;
+
+    /**
+     * valueUpdate
+     *
+     * Endpoint value changed. Callback function
+     *
+     * @param addr Device address
+     * @param name Endpoint name
+     * @param val value in string format
+     */
+    void (*valueUpdate)(uint8_t addr, const char *name, char *val);
+
+    /**
+     * Class constructor
+     */
+    inline SWAP(void)
     {
-      for(int i=0 ; i<numDevices ; i++)
-      {
-        if (devices[i]->address == addr)
-          return devices[i];
-      }
-      return null;
+      valueUpdate = NULL;
     }
 
-  public:
+    /**
+     * attachInterrupt
+     * 
+     * Declare custom ISR, to be called whenever an endpoint value changes
+     * 
+     * @param funct pointer to the custom function
+     */
+     inline void attachInterrupt(void (*funct)(uint8_t addr, const char *name, char *val))
+     {
+       valueUpdate = funct;
+     }
+
     /**
      * begin
      *
@@ -92,11 +115,12 @@ class SWAP
      * @param channel RF chanel
      * @param netidH  Network ID, high byte
      * @param netidL  Network ID, low byte
-     * @param address modem's device address
+     * @param addr modem's device address
      */
-    inline void begin(uint8_t channel=DEFAULT_RF_CHANNEL, uint8_t netidH=DEFAULT_NETID_H, uint8_t netidL=DEFAULT_NETID_L, uint8_t address=DEFAULT_DEV_ADDRESS)
+    inline void begin(uint8_t channel=DEFAULT_RF_CHANNEL, uint8_t netidH=DEFAULT_NETID_H, uint8_t netidL=DEFAULT_NETID_L, uint8_t addr=DEFAULT_DEV_ADDRESS)
     {
       LEDS::config();
+      address = addr;
       modem.begin();
       if (!modem.config(channel, netidH, netidL, address))
       {
@@ -114,6 +138,25 @@ class SWAP
     inline void registerDevice(DEVICE *device)
     {
       devices[numDevices++] = device;
+    }
+
+    /**
+     * getDevice
+     *
+     * Get device object with address passed as argument
+     *
+     * @param addr SWAP address
+     *
+     * @return DEVICE object
+     */
+    inline DEVICE * getDevice(uint8_t addr)
+    {
+      for(int i=0 ; i<numDevices ; i++)
+      {
+        if (devices[i]->address == addr)
+          return devices[i];
+      }
+      return null;
     }
 
     /**
@@ -136,6 +179,57 @@ class SWAP
      * Process incoming SWAP traffic
      */
     void process(void);
+
+    /**
+     * push
+     *
+     * Push value update towards user application
+     *
+     * @param addr Device address
+     * @param name Endpoint name
+     * @param val value in string format
+     */
+    inline void push(uint8_t addr, const char *name, char *val)
+    {
+      if (valueUpdate != NULL)
+        valueUpdate(addr, name, val);
+    }
+
+    /**
+     * push
+     *
+     * Push value update towards user application
+     *
+     * @param addr Device address
+     * @param name Endpoint name
+     * @param val value in integer format
+     */
+    inline void push(uint8_t addr, const char *name, int val)
+    {
+      char buf[24];
+      sprintf(buf, "%d", val);
+      push(addr, name, buf);
+    }
+
+    /**
+     * push
+     *
+     * Push value update towards user application
+     *
+     * @param addr Device address
+     * @param name Endpoint name
+     * @param val value in float format
+     * @param nbDec number of decimals to keep for hte transmitted value
+     */
+    inline void push(uint8_t addr, const char *name, float val, uint8_t nbDec)
+    {
+      char buf[24];
+      int integer = (int)val;
+      float decimal = val - integer;
+      decimal *= pow(10, nbDec);
+      sprintf(buf, "%d.%d", integer, (int)decimal);
+      push(addr, name, buf);
+    }
 };
 
 /**

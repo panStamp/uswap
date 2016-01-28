@@ -23,6 +23,7 @@
  */
 
 #include "modem.h"
+#include "tools.h"
 
 #define OK_RECEIVED() (rxBuffer[0] == 'O' && rxBuffer[1] == 'K')
 
@@ -142,13 +143,13 @@ CCPACKET* MODEM::getPacket(void)
     buf[0] = rxBuffer[1];  
     buf[1] = rxBuffer[2];
     buf[2] = 0;
-    ccPacket.rssi = charToHex(buf);
+    ccPacket.rssi = TOOLS::charToHex(buf);
 
     // LQI
     buf[0] = rxBuffer[3];  
     buf[1] = rxBuffer[4];
     buf[2] = 0;
-    ccPacket.lqi = charToHex(buf);
+    ccPacket.lqi = TOOLS::charToHex(buf);
 
     // Data
     ptr = rxBuffer + 6;
@@ -157,7 +158,7 @@ CCPACKET* MODEM::getPacket(void)
       buf[0] = ptr[0];  
       buf[1] = ptr[1];
       buf[2] = 0;
-      ccPacket.data[i] = charToHex(buf);
+      ccPacket.data[i] = TOOLS::charToHex(buf);
       ptr += 2;
     }
   }
@@ -180,37 +181,15 @@ uint8_t MODEM::write(CCPACKET *ccPacket)
   int i;
 
   for(i=0 ; i<ccPacket->length ; i++)
-    Serial.print(ccPacket->data[i]);
+  {
+    if (ccPacket->data[i] < 0x10)
+      Serial.print("0");
+
+    Serial.print(ccPacket->data[i], HEX);
+  }
 
   Serial.println("");
 
   return i;
-}
-
-/**
- * strToHex
- *
- * @param buf Hex byte as a char array
- *
- * @return Hex byte
- */
-uint8_t MODEM::charToHex(char *buf)
-{
-  uint8_t res = 0;
-  
-  for (int i=0 ; i<2 ; i++)
-  {
-    res <<= 4;
-    if (buf[i] >= 'A' && buf[i] <= 'F')
-      res |= buf[i] - 55;
-    else if (buf[i] >= 'a' && buf[i] <= 'f')
-      res |= buf[i] - 87;
-    else if (buf[i] >= '0' && buf[i] <= '9')
-      res |= buf[i] - 48;
-    else
-      return 0;
-  }
-
-  return res;
 }
 

@@ -39,7 +39,7 @@ void SWAP::process(void)
     SWPACKET swPacket(modem.getPacket());
     DEVICE *dev = getDevice(swPacket.regAddr);
 
-    if (dev != null)
+    if (dev != NULL)
     {
       // Update value only in case of SWAP status packet received
       if (swPacket.function == SWAPFUNCT_STA)
