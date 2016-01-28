@@ -22,7 +22,13 @@
  * Creation date: 01/02/2016
  */
 
-#include "devtemp.h"
+#include "uswap.h"
+
+/**
+ * Endpoint names
+ */
+const char VOLTAGE_NAME[] = "VOLTAGE";
+const char TEMPERATURE_NAME[] = "TEMPERATURE";
 
 /**
  * updateRegister
@@ -32,7 +38,7 @@
  * @param regId register id
  * @param value register value
  *
- * @return 
+ * @return true if a valid register was updated. Return false otherwise
  */
 uint8_t DEVTEMP::updateRegister(uint8_t regId, SWDATA *value)
 {
@@ -41,25 +47,28 @@ uint8_t DEVTEMP::updateRegister(uint8_t regId, SWDATA *value)
   switch(regId)
   {
     // Voltage
-    case VOLTAGE:
+    case VOLTAGE_REGID:
       if (value->length != 2)
         break;
       tmp = value->data[0] << 8;
-      tmp |= value->data[1];
-      voltage = tmp / 1000;
-      break;
+      voltage = tmp | value->data[1];
+      // Send update to user application
+      swap.push(address, VOLTAGE_NAME, voltage);
+      return true;
     // Temperature
-    case TEMPERATURE:
+    case TEMPERATURE_REGID:
       if (value->length != 2)
         break;
       tmp = value->data[0] << 8;
       tmp |= value->data[1];
       temperature = tmp * 0.1 - 50;
+      // Send update to user application
+      swap.push(address, TEMPERATURE_NAME, temperature, 1);
+      return true;
     default:
-      return -1;
       break;
   }
 
-  return 0;
+  return false;
 }
 

@@ -41,17 +41,17 @@ class DEVTEMP : public DEVICE
      */
      enum REGID
      {
-        VOLTAGE = 0x0B,
-        TEMPERATURE,
+        VOLTAGE_REGID = 0x0B,
+        TEMPERATURE_REGID,
      };
 
     /**
-     * Voltage supply
+     * Voltage supply (in mV)
      */
-    float voltage;
+    uint16_t voltage;
 
     /**
-     * Temperature
+     * Temperature (in ºC)
      */
     float temperature;
 
@@ -69,6 +69,8 @@ class DEVTEMP : public DEVICE
      *
      * @param regId register id
      * @param value register value
+     *
+     * @return true if a valid register was updated. Return false otherwise
      */
     uint8_t updateRegister(uint8_t regId, SWDATA *value);
 };

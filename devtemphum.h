@@ -41,8 +41,8 @@ class DEVTEMPHUM : public DEVICE
      */
      enum REGID
      {
-        VOLTAGE = 0x0B,
-        TEMPHUM,
+        VOLTAGE_REGID = 0x0B,
+        TEMPHUM_REGID,
      };
 
     /**
@@ -74,6 +74,8 @@ class DEVTEMPHUM : public DEVICE
      *
      * @param regId register id
      * @param value register value
+     *
+     * @return true if a valid register was updated. Return false otherwise
      */
     uint8_t updateRegister(uint8_t regId, SWDATA *value);
 };

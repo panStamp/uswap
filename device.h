@@ -26,7 +26,8 @@
 #define _DEVICE_H
 
 #include "Arduino.h"
-#include "swpacket.h"
+//#include "swpacket.h"
+#include "swcommand.h"
 
 /**
  * Class: DEVICE
@@ -57,8 +58,7 @@ class DEVICE
      * @param regId register id
      * @param value register value
      *
-     * @return 0 in case of valid register and value successfully updated
-     *        -1 in case of not a valid register
+     * @return true if a valid register was updated. Return false otherwise
      */
     virtual uint8_t updateRegister(uint8_t regId, SWDATA *value) {}
 
@@ -70,10 +70,25 @@ class DEVICE
      * @param regId register id
      * @param value register value
      *
-     * @return 0 in case of valid register and value successfully updated
-     *        -1 in case of not a valid register or lack of response from device
+     * @return >0 in case of command successfully transmitted. Return 0 otherwise
      */
-    virtual uint8_t controlRegister(uint8_t regId, SWDATA *value) {};
+    inline uint8_t controlRegister(uint8_t regId, SWDATA *value)
+    {
+      SWCOMMAND command(address, regId, value);
+      return command.send();
+    }
+
+    /**
+     * controlOutput
+     *
+     * Control output value
+     *
+     * @param name endpoint name
+     * @param value output value in string format
+     *
+     * @return true in case of command successfully transmitted. Return false otherwise
+     */
+    virtual uint8_t controlOutput(char *name, uint8_t *buf) {};
 };
 
 #endif
