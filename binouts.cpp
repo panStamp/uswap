@@ -81,6 +81,48 @@ uint8_t BINOUTS::updateRegister(uint8_t regId, SWDATA *value)
 }
 
 /**
+ * getValue
+ *
+ * Get endpoint value
+ *
+ * @param val Current value returned in string format
+ * @param name Endpoint name
+ *
+ * @return true if a valid endpoint was found. Return false otherwise
+ */
+uint8_t BINOUTS::getValue(char *val, char *name)
+{
+  int regId = -1;
+  uint8_t levels[4], state;
+
+  // Binary output?
+  for(int i=0 ; i<sizeof(binOutputs) ; i++)
+  {
+    if (!strcmp(BINOUTS_NAME[i], name))
+    {
+      if (currentStates & (1 << i))
+        strcpy(val, "on");
+      else
+        strcpy(val, "off");
+
+      return true;
+    }
+  }
+
+  // PWM output?
+  for(int i=0 ; i<sizeof(pwmOutputs) ; i++)
+  {
+    if (!strcmp(PWMOUTS_NAME[i], name))
+    {
+      sprintf(val, "%d", pwmOutputs[i]);
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
  * controlOutput
  *
  * Control output value

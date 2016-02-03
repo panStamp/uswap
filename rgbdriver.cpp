@@ -84,6 +84,60 @@ uint8_t RGBDRIVER::updateRegister(uint8_t regId, SWDATA *value)
 }
 
 /**
+ * getValue
+ *
+ * Get endpoint value
+ *
+ * @param val Current value returned in string format
+ * @param name Endpoint name
+ *
+ * @return true if a valid endpoint was found. Return false otherwise
+ */
+uint8_t RGBDRIVER::getValue(char *val, char *name)
+{
+  char buf[7], red[3], green[3], blue[3];
+
+  // Convert RGB array into string
+  if (rgb[0] < 0x10)
+    sprintf(red, "0%X", rgb[0]);
+  else
+    sprintf(red, "%X", rgb[0]);
+  if (rgb[1] < 0x10)
+    sprintf(green, "0%X", rgb[1]);
+  else
+    sprintf(green, "%X", rgb[1]);
+  if (rgb[2] < 0x10)
+    sprintf(blue, "0%X", rgb[2]);
+  else
+    sprintf(blue, "%X", rgb[2]);
+
+  sprintf(buf, "%s%s%s", red, green, blue);
+
+  if (!strcmp(name, RGB_NAME))
+  {
+    strcpy(val, red);
+    return true;
+  }
+  else if (!strcmp(name, GREEN_NAME))
+  {
+    strcpy(val, green);
+    return true;
+  }
+  else if (!strcmp(name, BLUE_NAME))
+  {
+    strcpy(val, blue);
+    return true;
+  }
+  else if (!strcmp(name, RGB_NAME))
+  {
+    strcpy(val, buf);
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * controlOutput
  *
  * Control output value

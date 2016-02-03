@@ -51,10 +51,7 @@ BINOUTS binOuts(0x11);
 RGBDRIVER rgbDriver(0xFF);
 
 void setup()
-{
-  pinMode(LED1, OUTPUT);
-  pinMode(LED2, OUTPUT);
-  
+{ 
   Serial.begin(38400);
   
   // Connect to WiFi network
@@ -87,7 +84,9 @@ void setup()
   mqttConnect();
   mqttHandle();
 
-  delay(1000);
+  // Initialize web interface
+  initWebServer();  
+
   // Start conversations with modem
   swap.begin();
 }
@@ -95,6 +94,7 @@ void setup()
 void loop()
 {
   mqttHandle();
+  httpHandle();
   swap.process();
 }
 

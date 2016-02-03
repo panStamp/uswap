@@ -77,3 +77,42 @@ uint8_t DEVTEMPHUM::updateRegister(uint8_t regId, SWDATA *value)
   return false;
 }
 
+/**
+ * getValue
+ *
+ * Get endpoint value
+ *
+ * @param val Current value returned in string format
+ * @param name Endpoint name
+ *
+ * @return true if a valid endpoint was found. Return false otherwise
+ */
+uint8_t DEVTEMPHUM::getValue(char *val, char *name)
+{
+  if (!strcmp(name, VOLTAGE_NAME))
+  {
+    sprintf(val, "%d", voltage);
+    return true;
+  }
+  else if (!strcmp(name, TEMPERATURE_NAME))
+  {
+    char buf[24];
+    int integer = (int)temperature;
+    float decimal = temperature - integer;
+    decimal *= 10;
+    sprintf(val, "%d.%d", integer, (int)decimal);
+    return true;
+  }
+  else if (!strcmp(name, HUMIDITY_NAME))
+  {
+    char buf[24];
+    int integer = (int)humidity;
+    float decimal = humidity - integer;
+    decimal *= 10;
+    sprintf(val, "%d.%d", integer, (int)decimal);
+    return true;
+  }
+
+  return false;
+}
+

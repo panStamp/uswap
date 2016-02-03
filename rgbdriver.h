@@ -69,6 +69,18 @@ class RGBDRIVER : public DEVICE
     uint8_t updateRegister(uint8_t regId, SWDATA *value);
 
     /**
+     * getValue
+     *
+     * Get endpoint value
+     *
+     * @param val Current value returned in string format
+     * @param name Endpoint name
+     *
+     * @return true if a valid endpoint was found. Return false otherwise
+     */
+    uint8_t getValue(char *val, char *name);
+
+    /**
      * controlOutput
      *
      * Control output value

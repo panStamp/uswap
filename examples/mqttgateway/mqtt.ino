@@ -130,7 +130,6 @@ void mqttSend(uint8_t addr, const char *name, char *val)
  * mqttRgbReceive
  * 
  * Function called whenever a MQTT packet is received
- * RGB values must be in HEX format
  * 
  * @param topic MQTT topic
  * @param payload message
