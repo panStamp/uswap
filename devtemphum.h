@@ -23,7 +23,7 @@
  */
 
 #ifndef _DEVTEMPHUM_H
-#define _DEVTDEVTEMPHUMEMP_H
+#define _DEVTEMPHUM_H
 
 #include "device.h"
 
@@ -46,17 +46,17 @@ class DEVTEMPHUM : public DEVICE
      };
 
     /**
-     * Voltage supply
+     * Voltage supply (in mV)
      */
-    float voltage;
+    uint16_t voltage;
 
     /**
-     * Temperature
+     * Temperature in ºC
      */
     float temperature;
 
     /**
-     * Humidity
+     * Humidity in %
      */
     float humidity;
 
