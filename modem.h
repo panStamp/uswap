@@ -80,7 +80,7 @@ class MODEM
     {
       Serial.begin(speed);
       Serial.setDebugOutput(0);
-      Serial.println("Starting modem");
+      Serial.println("");
       delay(2000);
     }
 
