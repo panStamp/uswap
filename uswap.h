@@ -34,6 +34,8 @@
 #include "devtemphum.h"
 #include "binouts.h"
 #include "rgbdriver.h"
+#include "co2meter.h"
+#include "currentmeter.h"
 
 #define null 0
 #define MAX_DEVICES  50
