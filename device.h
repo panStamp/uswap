@@ -100,7 +100,7 @@ class DEVICE
      *
      * @return true in case of command successfully transmitted. Return false otherwise
      */
-    virtual uint8_t controlOutput(char *name, uint8_t *buf) {};
+    virtual uint8_t controlOutput(char *name, uint8_t *buf) {return false;};
 };
 
 #endif
