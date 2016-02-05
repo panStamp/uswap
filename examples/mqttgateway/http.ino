@@ -40,9 +40,14 @@ void initWebServer(void)
 
   server.on("/status", []()
   {
-    processStatusRequest(); // Set RGB value
+    processStatusRequest();
   });
- 
+
+  server.on("/control", []()
+  {
+    processControlRequest();
+  });
+  
   server.begin();
 }
 
@@ -60,41 +65,103 @@ void httpHandle(void)
  * Process status request
  */
 void processStatusRequest(void)
-{ 
-  if (server.args() == 1)
+{
+  webString = "Request not supported";
+  
+  if (server.args() == 2)
   {
     char value[64], buf[7];
-   
+  
     if (server.argName(0) == "addr")
     {
-      if (server.arg(0).length() == 0)
-        return;
-        
-      uint8_t addr = (uint8_t) server.arg(0).toInt();
-      // Search device
-      DEVICE *device = swap.getDevice(addr);
-    
-      if (device != NULL)
+      if (server.arg(0).length() > 0)
       {
-        if (server.argName(1) == "endp")
+        uint8_t addr = (uint8_t) server.arg(0).toInt();
+        // Search device
+        DEVICE *device = swap.getDevice(addr);
+      
+        if (device == NULL)
         {
-          if (server.arg(1).length() == 0)
-            return;
-
-          char epName[32];
-          server.arg(1).toCharArray(epName, sizeof(server.arg(1)));
-          if (device->getValue(value, epName))
+            webString = "Device " + addr;
+            webString += " not found";
+        }
+        else
+        {
+          if (server.argName(1) == "endp")
           {
-            String str(value);
-            server.send(200, "text/plain", str);
-            return;
+            if (server.arg(1).length() > 0)
+            {
+              char epName[32];
+              server.arg(1).toCharArray(epName, sizeof(server.arg(1)));
+              if (device->getValue(value, epName))
+              {
+                String str(value);
+                server.send(200, "text/plain", str);
+                return;
+              }
+            }
           }
         }
       }
     }
   }    
 
+  server.send(200, "text/plain", webString);
+}
+
+
+/**
+ * processControlRequest
+ * 
+ * Process control request
+ */
+void processControlRequest(void)
+{
   webString = "Request not supported";
+  
+  if (server.args() == 3)
+  {
+    char value[64], buf[7];
+  
+    if (server.argName(0) == "addr")
+    {
+      if (server.arg(0).length() > 0)
+      {
+        uint8_t addr = (uint8_t) server.arg(0).toInt();
+        // Search device
+        DEVICE *device = swap.getDevice(addr);
+      
+        if (device == NULL)
+          webString += "Device not found";
+        else
+        {
+          if (server.argName(1) == "endp")
+          {
+            if (server.arg(1).length() > 0)
+            {
+              char epName[32];
+              server.arg(1).toCharArray(epName, sizeof(server.arg(1)));
+    
+              if (server.argName(2) == "val")
+              {
+                if (server.arg(2).length() > 0)
+                {
+                  char val[32];
+                  server.arg(2).toCharArray(val, sizeof(server.arg(2)));
+                
+                  if (device->controlOutput(epName, (uint8_t*)val))
+                    webString = "OK";
+                  else
+                    webString = "NOK";
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }    
+
   server.send(200, "text/plain", webString);
 }
 
