@@ -25,21 +25,17 @@
 #include <uswap.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
+#include "wifi.h"
 
 
 #define DEBUG_ENABLED  1
 
-/**
- * Wifi settings
- * Enter here your SSID and password
- */
-const char* ssid     = "Panstamp";
-const char* password = "machacalabarraca";
+#define MODEM_RESET_LINE  15
 
 /**
  * Description string
  */
-const char* description = "MQTT RGB driver";
+const char* description = "MQTT+HTTP-SWAP gateway";
 
 // Wifi client
 WiFiClient espClient;
@@ -47,12 +43,18 @@ WiFiClient espClient;
 // SWAP devices
 DEVTEMP tempSensor(0x1A);
 DEVTEMPHUM tempHumSensor(0x09);
-BINOUTS binOuts(0x11);
+BINOUTS binOuts(0x10);
 RGBDRIVER rgbDriver(0xFF);
 
 void setup()
 { 
+  // Modem reset ESP pin
+  pinMode(MODEM_RESET_LINE, OUTPUT);
+  digitalWrite(MODEM_RESET_LINE, LOW);
+  
+  #ifdef DEBUG_ENABLED
   Serial.begin(38400);
+  #endif
   
   // Connect to WiFi network
   WiFi.begin(ssid, password);
@@ -87,6 +89,16 @@ void setup()
   // Initialize web interface
   initWebServer();  
 
+  #ifdef DEBUG_ENABLED
+  Serial.print("Opening modem");
+  #endif
+
+  // Reset modem
+  Serial.end();
+  digitalWrite(MODEM_RESET_LINE, HIGH);
+  delay(1000);
+  Serial.begin(38400);
+   
   // Start conversations with modem
   swap.begin();
 }

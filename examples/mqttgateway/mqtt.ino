@@ -27,7 +27,6 @@
 /**
  * MQTT connection
  */
-IPAddress mqtt_server( 192, 168, 1, 55 );   // MQTT broker
 #define mqtt_user "your_username"
 #define mqtt_password "your_password"
 
