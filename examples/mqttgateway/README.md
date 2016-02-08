@@ -63,7 +63,7 @@ BINOUTS binOuts(0x10);
 RGBDRIVER rgbDriver(0xFF);
 ```
 
-Once all devices are declared, the application takes everything related to each device from its own class, where register id's and endpoint names are defined. This page describes each device interface. You will certainly need it in order to access all available endpoints from MQTT or HTTP. After this, wifi.h needs to be edited with the custom wifi settings:
+Once all devices are declared, the application takes everything related to each device from its own class, where register id's and endpoint names are defined. [This page](https://github.com/panStamp/uswap/wiki/Device-subclasses) describes each device interface. You will certainly need it in order to access all available endpoints from MQTT or HTTP. After this, wifi.h needs to be edited with the custom wifi settings:
 
 ```C++
 /**
