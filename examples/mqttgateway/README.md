@@ -37,7 +37,7 @@ If we want to subscribe only to the status packets transmitted by a SWAP device 
 mosquitto_sub -v -t mynetwork/status/51/#
 ```
 
-Finally, we could subscribe to a given endpoint:
+Finally, we could also subscribe to a given endpoint:
 
 ```
 mosquitto_sub -v -t mynetwork/status/51/HUMIDITY
