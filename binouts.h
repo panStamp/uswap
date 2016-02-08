@@ -52,12 +52,14 @@ class BINOUTS : public DEVICE
      };
 
     /**
-     * Binary (ON/OFF) outputs
+     * Binary (ON/OFF) outputs. Each bit represents the state of a binary output.
+     * Lower output (BINOUT0) is the less significant bit
      */
     uint8_t binOutputs[8];
 
     /**
-     * PWM (0-255) outputs
+     * PWM (0-255) outputs. Each byte represents the level of a PWM output.
+     * Lower output (PWMOUT0) is the less significant byte.
      */
     uint8_t pwmOutputs[4];
 

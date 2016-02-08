@@ -45,7 +45,7 @@ class RGBDRIVER : public DEVICE
      };
 
     /**
-     * Binary (ON/OFF) outputs
+     * RGB levels
      */
     uint8_t rgb[3];
 
