@@ -1,6 +1,6 @@
 #mqttgateway
 
-mqttgateway turns any ESP8266 module or IP-enabled Arduino board into a SWAP server and MQTT/HTTP gateway. The host needs to be connected to a panStamp modem via UART. The modem is responsible for listening to the wireless network whilst the host converts any SWAP status received into a MQTT message. MQTT can also be used to transmit SWAP commands through the gateway.
+mqttgateway turns any ESP8266 module or IP-enabled Arduino board into a SWAP server and MQTT/HTTP gateway. The host needs to be connected to a panStamp modem via UART. The modem is responsible for listening to the wireless network whilst the host converts any SWAP status received into a MQTT message. MQTT can also be used to transmit SWAP commands through the gateway. This gateway relies on [uSWAP](https://github.com/panStamp/uswap/wiki), a tiny SWAP library for Arduino's and ESP8266.
 
 ##HTTP
 
@@ -50,3 +50,35 @@ mosquitto_pub -t mynetwork/control/25/BINOUT0 -m ON
 ```
 
 The above command is asking device 25 to turn BINOUT0 ON
+
+## How it works```
+
+In order to make the gateway work for a given SWAP network, all SWAP devices need to be declared at the begining of mqttnetwork.ino. You can look for the sample declarations in the code and replace them by your own declarations:
+
+```C++
+// SWAP devices
+DEVTEMP tempSensor(0x1A);
+DEVTEMPHUM tempHumSensor(0x09);
+BINOUTS binOuts(0x10);
+RGBDRIVER rgbDriver(0xFF);
+```
+
+Once all devices are declared, the application takes everything related to each device from its own class, where register id's and endpoint names are defined. This page describes each device interface. You will certainly need it in order to access all available endpoints from MQTT or HTTP. After this, wifi.h needs to be edited with the custom wifi settings:
+
+```C++
+/**
+ * Wifi settings
+ * Enter here your SSID and password
+ */
+const char* ssid     = "myWifiNet";
+const char* password = "myWifiPassword";
+
+/**
+ * MQTT broker
+ */ 
+IPAddress mqtt_server( 192, 168, 1, 55 );
+```
+
+Once the above step completed, the application can be compiled and flashed into the MCU.
+
+HTTP and MQTT interfaces are managed "in the background", transparently for the user, so there is no need to even modify http.ino or mqtt.ino.
