@@ -46,7 +46,7 @@ mosquitto_sub -v -t mynetwork/status/51/HUMIDITY
 The control topic works very similar:
 
 ```
-mosquitto_pub -v -t mynetwork/control/25/BINOUT0 ON
+mosquitto_pub -t mynetwork/control/25/BINOUT0 -m ON
 ```
 
 The above command is asking device 25 to turn BINOUT0 ON
